@@ -9,6 +9,7 @@ import {
   sonarFinDeBloque,
 } from '../engine/audio.js'
 import BottomBar, { BotonBarra } from '../components/BottomBar.jsx'
+import Finisher from './Finisher.jsx'
 
 const ETIQUETAS = {
   prepara: 'Prepará',
@@ -59,6 +60,11 @@ export default function Session({ timeline, onTerminar }) {
   // Al terminar, App cambia de pantalla y este componente se desmonta.
   if (terminado) return null
 
+  // El finisher no va por reloj: se lleva la pantalla entera con su propio checklist.
+  if (fase.interactivo) {
+    return <Finisher fase={fase} onCompletar={t.completarInteractiva} onSaltar={t.saltarBloque} />
+  }
+
   const sigue = queSigue(timeline, t.faseIdx)
 
   return (
@@ -73,21 +79,15 @@ export default function Session({ timeline, onTerminar }) {
       </header>
 
       <div className="sesion-centro">
-        {fase.interactivo ? (
-          <Finisher fase={fase} onCompletar={t.completarInteractiva} />
-        ) : (
-          <>
-            <p className="sesion-estado">{etiquetaEstado(fase)}</p>
-            {fase.ejercicio && <p className="sesion-ejercicio">{fase.ejercicio}</p>}
-            <p className="sesion-cuenta">{restante}</p>
-            {fase.items && (
-              <ul className="sesion-items">
-                {fase.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            )}
-          </>
+        <p className="sesion-estado">{etiquetaEstado(fase)}</p>
+        {fase.ejercicio && <p className="sesion-ejercicio">{fase.ejercicio}</p>}
+        <p className="sesion-cuenta">{restante}</p>
+        {fase.items && (
+          <ul className="sesion-items">
+            {fase.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         )}
       </div>
 
@@ -105,20 +105,3 @@ export default function Session({ timeline, onTerminar }) {
   )
 }
 
-// Placeholder · Paso 8 lo reemplaza por el checklist de reps con cronómetro ascendente.
-function Finisher({ fase, onCompletar }) {
-  return (
-    <>
-      <p className="sesion-estado">Finisher</p>
-      <p className="sesion-ejercicio">{fase.esquema.join(' · ')}</p>
-      <ul className="sesion-items">
-        {fase.ejercicios.map((ej) => (
-          <li key={ej}>{ej}</li>
-        ))}
-      </ul>
-      <button className="sesion-completar" onClick={onCompletar}>
-        Listo el finisher
-      </button>
-    </>
-  )
-}

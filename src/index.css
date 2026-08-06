@@ -145,16 +145,103 @@ button {
   opacity: 0.5;
 }
 
-.sesion-completar {
-  margin-top: 1rem;
-  padding: 1rem 2rem;
-  border: 1px solid var(--estado);
+/* ── Finisher · checklist de reps, sin cuenta regresiva ──────────────────── */
+
+.finisher {
+  min-height: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: calc(1.5rem + env(safe-area-inset-top)) 1rem
+    calc(var(--alto-barra) + var(--seguro-abajo) + 1.5rem);
+}
+
+.finisher-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.finisher-reloj {
+  font-family: var(--fuente-mono);
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+}
+
+.finisher-reloj[data-completo='true'] {
+  color: var(--descanso);
+  opacity: 1;
+}
+
+.finisher-escalones {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.escalon {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio);
+  transition: opacity 0.2s;
+}
+
+.escalon[data-estado='actual'] {
+  border-color: color-mix(in srgb, var(--prepara) 45%, transparent);
+}
+
+.escalon[data-estado='pendiente'] {
+  opacity: 0.45;
+}
+
+.escalon[data-estado='hecho'] {
+  opacity: 0.35;
+}
+
+.escalon-reps {
+  font-family: var(--fuente-mono);
+  font-size: 1.75rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.escalon[data-estado='actual'] .escalon-reps {
+  color: var(--prepara);
+}
+
+.escalon-ejercicios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+/* Tap targets grandes: se tildan con las manos sudadas y sin puntería. */
+.check {
+  min-height: 3.25rem;
+  padding: 0.4rem 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--cream) 25%, transparent);
   border-radius: var(--radio);
   background: none;
-  color: var(--estado);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.check[aria-pressed='true'] {
+  background: var(--descanso);
+  border-color: var(--descanso);
+  color: var(--ink);
+  font-weight: 500;
 }
 
 /* ── Barra flotante inferior ─────────────────────────────────────────────── */
