@@ -1,0 +1,337 @@
+/* Tokens. La tipografía definitiva (DM Sans / DM Mono) entra en el Paso 9;
+   los colores de estado ya están acá para poder retocarlos en un solo lugar. */
+:root {
+  --ink: #14120f;
+  --cream: #f1ede1;
+  --radio: 3px;
+
+  --trabajo: #ff5c39;
+  --descanso: #3ecfb2;
+  --prepara: #ffd166;
+
+  --fuente: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --alto-barra: 4.5rem;
+  --seguro-abajo: env(safe-area-inset-bottom);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--fuente);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* ── Sesión ──────────────────────────────────────────────────────────────── */
+
+.sesion {
+  --estado: var(--cream);
+
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem calc(var(--alto-barra) + var(--seguro-abajo) + 1.25rem);
+  text-align: center;
+}
+
+.sesion[data-tipo='trabajo'] {
+  --estado: var(--trabajo);
+}
+
+.sesion[data-tipo='descanso'] {
+  --estado: var(--descanso);
+}
+
+.sesion[data-tipo='prepara'],
+.sesion[data-tipo='finisher'] {
+  --estado: var(--prepara);
+}
+
+.sesion-cabecera {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: env(safe-area-inset-top);
+}
+
+.sesion-centro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.sesion-estado {
+  color: var(--estado);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.sesion-ejercicio {
+  font-size: clamp(1.5rem, 7vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* Legible a 1-2 metros: es el elemento que se mira entrenando. */
+.sesion-cuenta {
+  color: var(--estado);
+  font-family: var(--fuente-mono);
+  font-size: clamp(6rem, 42vw, 15rem);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+/* Guía de warmup / cooldown: no se cronometra cada item, es una lista de referencia. */
+.sesion-items {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+.sesion-pie {
+  min-height: 1.5em;
+}
+
+.sesion-sigue {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  opacity: 0.5;
+}
+
+.sesion-completar {
+  margin-top: 1rem;
+  padding: 1rem 2rem;
+  border: 1px solid var(--estado);
+  border-radius: var(--radio);
+  background: none;
+  color: var(--estado);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ── Barra flotante inferior ─────────────────────────────────────────────── */
+
+.barra {
+  position: fixed;
+  inset: auto 0 0 0;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem calc(0.5rem + var(--seguro-abajo));
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid color-mix(in srgb, var(--cream) 12%, transparent);
+}
+
+.barra-boton {
+  flex: 1;
+  min-height: 3.5rem;
+  border: 1px solid color-mix(in srgb, var(--cream) 28%, transparent);
+  border-radius: var(--radio);
+  background: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.barra-boton[data-variante='activo'] {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--ink);
+}
+
+.barra-boton:disabled {
+  opacity: 0.3;
+}
+
+/* ── Home ────────────────────────────────────────────────────────────────── */
+
+.home {
+  min-height: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: calc(2rem + env(safe-area-inset-top)) 1.25rem calc(2rem + var(--seguro-abajo));
+}
+
+.home-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.marca {
+  font-family: var(--fuente-mono);
+  font-size: clamp(3.5rem, 24vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.home-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.5rem 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--cream) 22%, transparent);
+  border-radius: var(--radio);
+  background: none;
+  text-align: left;
+}
+
+.card:active {
+  background: color-mix(in srgb, var(--cream) 8%, transparent);
+}
+
+.card-dia {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.card-sub {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.card-dur {
+  margin-top: 0.35rem;
+}
+
+/* ── Preview ─────────────────────────────────────────────────────────────── */
+
+.preview {
+  max-width: 32rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: calc(1.75rem + env(safe-area-inset-top)) 1.25rem
+    calc(var(--alto-barra) + var(--seguro-abajo) + 1.5rem);
+}
+
+.preview-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.preview-titulo {
+  font-size: 2.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.preview-lista {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 0.9rem;
+  border-left: 1px solid color-mix(in srgb, var(--cream) 22%, transparent);
+}
+
+.bloque-nombre {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.bloque-items {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* ── Cierre ──────────────────────────────────────────────────────────────── */
+
+.cierre {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem calc(var(--alto-barra) + var(--seguro-abajo) + 1.5rem);
+  text-align: center;
+}
+
+.cierre-marca {
+  font-size: clamp(4rem, 25vw, 7rem);
+  line-height: 1;
+  color: var(--descanso);
+}
+
+.cierre-texto {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
