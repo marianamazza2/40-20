@@ -41,7 +41,13 @@ export default function App() {
         />
       )
     case 'sesion':
-      return <Session timeline={timeline} onTerminar={() => setPantalla('fin')} />
+      return (
+        <Session
+          timeline={timeline}
+          onTerminar={() => setPantalla('fin')}
+          onSalir={volverAlHome}
+        />
+      )
     case 'fin':
       return <Done sesion={PLAN[dia]} onVolver={volverAlHome} />
     default:

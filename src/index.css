@@ -1,16 +1,20 @@
-/* Tokens. La tipografía definitiva (DM Sans / DM Mono) entra en el Paso 9;
-   los colores de estado ya están acá para poder retocarlos en un solo lugar. */
+/* Sistema de diseño · alineado a M·NK MODE.
+   Todo lo ajustable vive acá: colores de estado, tipografía, radios. */
 :root {
   --ink: #14120f;
   --cream: #f1ede1;
   --radio: 3px;
 
+  /* Estados. Se leen a 1-2 metros sobre fondo ink y se distinguen entre sí de reojo. */
   --trabajo: #ff5c39;
   --descanso: #3ecfb2;
   --prepara: #ffd166;
 
-  --fuente: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --fuente-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Tinte del fondo según el estado: el color se percibe sin romper el dark-first. */
+  --tinte: 8%;
+
+  --fuente: 'DM Sans Variable', system-ui, -apple-system, sans-serif;
+  --fuente-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --alto-barra: 4.5rem;
   --seguro-abajo: env(safe-area-inset-bottom);
@@ -34,6 +38,13 @@ body,
   height: 100%;
 }
 
+/* Sin pull-to-refresh: un scroll hacia abajo en plena sesión recargaba la app
+   y se perdía el entrenamiento. Tampoco encadena el scroll entre contenedores. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
 body {
   background: var(--ink);
   color: var(--cream);
@@ -49,9 +60,12 @@ button {
   cursor: pointer;
 }
 
+/* Etiquetas y estados: siempre en mono y mayúsculas, como en M·NK MODE. */
 .label {
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
+  font-family: var(--fuente-mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   opacity: 0.55;
 }
@@ -67,6 +81,10 @@ button {
   gap: 1rem;
   padding: 1.25rem 1.25rem calc(var(--alto-barra) + var(--seguro-abajo) + 1.25rem);
   text-align: center;
+  /* Tinte apenas perceptible del color del estado: de reojo sabés si estás
+     trabajando o descansando sin tener que enfocar el número. */
+  background: color-mix(in srgb, var(--estado) var(--tinte), var(--ink));
+  transition: background 0.25s ease;
 }
 
 .sesion[data-tipo='trabajo'] {
@@ -83,10 +101,15 @@ button {
 }
 
 .sesion-cabecera {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
   padding-top: env(safe-area-inset-top);
+}
+
+.sesion-cabecera .label:last-child {
+  text-align: right;
 }
 
 .sesion-centro {
@@ -100,15 +123,17 @@ button {
 
 .sesion-estado {
   color: var(--estado);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-family: var(--fuente-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
 }
 
 .sesion-ejercicio {
   font-size: clamp(1.5rem, 7vw, 2.5rem);
   font-weight: 500;
+  letter-spacing: -0.015em;
   line-height: 1.15;
   text-wrap: balance;
 }
@@ -121,7 +146,7 @@ button {
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   line-height: 0.9;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
 /* Guía de warmup / cooldown: no se cronometra cada item, es una lista de referencia. */
@@ -140,8 +165,9 @@ button {
 }
 
 .sesion-sigue {
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
+  font-family: var(--fuente-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
   opacity: 0.5;
 }
 
@@ -159,10 +185,10 @@ button {
 }
 
 .finisher-cabecera {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .finisher-reloj {
@@ -263,16 +289,45 @@ button {
   border: 1px solid color-mix(in srgb, var(--cream) 28%, transparent);
   border-radius: var(--radio);
   background: none;
-  font-size: 0.75rem;
+  font-family: var(--fuente-mono);
+  font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.barra-boton:active {
+  background: color-mix(in srgb, var(--cream) 12%, transparent);
+}
+
+.barra-boton[data-variante='activo']:active {
+  background: color-mix(in srgb, var(--cream) 80%, var(--ink));
 }
 
 .barra-boton[data-variante='activo'] {
   background: var(--cream);
   border-color: var(--cream);
   color: var(--ink);
+}
+
+.barra-boton[data-variante='peligro'] {
+  border-color: color-mix(in srgb, var(--trabajo) 65%, transparent);
+  color: var(--trabajo);
+}
+
+/* Tap target de 2.75rem, arriba y lejos de Pausa: no se toca por accidente. */
+.boton-salir {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  background: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.45;
+}
+
+.boton-salir:active {
+  opacity: 1;
 }
 
 .barra-boton:disabled {
@@ -302,7 +357,7 @@ button {
   font-family: var(--fuente-mono);
   font-size: clamp(3.5rem, 24vw, 6rem);
   font-weight: 500;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
   line-height: 1;
 }
 
@@ -330,7 +385,7 @@ button {
 .card-dia {
   font-size: 1.75rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
 }
 
 .card-sub {
@@ -363,7 +418,7 @@ button {
 .preview-titulo {
   font-size: 2.25rem;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
   line-height: 1;
 }
 
@@ -421,4 +476,5 @@ button {
 .cierre-texto {
   font-size: 1.5rem;
   font-weight: 500;
+  letter-spacing: -0.02em;
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTimer } from '../engine/useTimer.js'
 import { useWakeLock } from '../engine/useWakeLock.js'
 import { queSigue } from '../engine/timeline.js'
@@ -8,7 +8,7 @@ import {
   sonarCuentaAtras,
   sonarFinDeBloque,
 } from '../engine/audio.js'
-import BottomBar, { BotonBarra } from '../components/BottomBar.jsx'
+import BottomBar, { BarraSalir, BotonBarra, BotonSalir } from '../components/BottomBar.jsx'
 import Finisher from './Finisher.jsx'
 
 const ETIQUETAS = {
@@ -23,8 +23,9 @@ function etiquetaEstado(fase) {
   return ETIQUETAS[fase.tipo] ?? fase.bloqueNombre
 }
 
-export default function Session({ timeline, onTerminar }) {
+export default function Session({ timeline, onTerminar, onSalir }) {
   const bloqueAnteriorRef = useRef(null)
+  const [confirmandoSalida, setConfirmandoSalida] = useState(false)
 
   const alCambiarFase = useCallback((fase) => {
     const anterior = bloqueAnteriorRef.current
@@ -49,6 +50,13 @@ export default function Session({ timeline, onTerminar }) {
     empezar()
   }, [empezar])
 
+  // Recargar o cerrar la pestaña con la sesión a medias pide confirmación al navegador.
+  useEffect(() => {
+    const avisar = (e) => e.preventDefault()
+    window.addEventListener('beforeunload', avisar)
+    return () => window.removeEventListener('beforeunload', avisar)
+  }, [])
+
   // Cuenta regresiva de los últimos 3s. `restante` solo cambia una vez por segundo,
   // así que el efecto dispara un tic por segundo aunque el tick corra a 100 ms.
   useEffect(() => {
@@ -62,7 +70,14 @@ export default function Session({ timeline, onTerminar }) {
 
   // El finisher no va por reloj: se lleva la pantalla entera con su propio checklist.
   if (fase.interactivo) {
-    return <Finisher fase={fase} onCompletar={t.completarInteractiva} onSaltar={t.saltarBloque} />
+    return (
+      <Finisher
+        fase={fase}
+        onCompletar={t.completarInteractiva}
+        onSaltar={t.saltarBloque}
+        onSalir={onSalir}
+      />
+    )
   }
 
   const sigue = queSigue(timeline, t.faseIdx)
@@ -70,12 +85,11 @@ export default function Session({ timeline, onTerminar }) {
   return (
     <section className="sesion" data-tipo={fase.tipo}>
       <header className="sesion-cabecera">
+        <BotonSalir onClick={() => setConfirmandoSalida(true)} />
         <p className="label">{fase.bloqueNombre}</p>
-        {fase.ronda && (
-          <p className="label">
-            Ronda {fase.ronda}/{fase.totalRondas}
-          </p>
-        )}
+        <p className="label">
+          {fase.ronda ? `Ronda ${fase.ronda}/${fase.totalRondas}` : ''}
+        </p>
       </header>
 
       <div className="sesion-centro">
@@ -95,12 +109,16 @@ export default function Session({ timeline, onTerminar }) {
         {sigue && <p className="sesion-sigue">Sigue: {sigue}</p>}
       </footer>
 
-      <BottomBar>
-        <BotonBarra onClick={t.alternarPausa} variante={corriendo ? 'normal' : 'activo'}>
-          {corriendo ? 'Pausa' : 'Reanudar'}
-        </BotonBarra>
-        <BotonBarra onClick={t.saltarBloque}>Saltar bloque</BotonBarra>
-      </BottomBar>
+      {confirmandoSalida ? (
+        <BarraSalir onCancelar={() => setConfirmandoSalida(false)} onSalir={onSalir} />
+      ) : (
+        <BottomBar>
+          <BotonBarra onClick={t.alternarPausa} variante={corriendo ? 'normal' : 'activo'}>
+            {corriendo ? 'Pausa' : 'Reanudar'}
+          </BotonBarra>
+          <BotonBarra onClick={t.saltarBloque}>Saltar bloque</BotonBarra>
+        </BottomBar>
+      )}
     </section>
   )
 }
